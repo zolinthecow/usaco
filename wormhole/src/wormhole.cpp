@@ -1,3 +1,8 @@
+/*
+ID: colinzh3
+PROG: wormhole
+LANG: C++
+ */
 #include <map>
 #include <set>
 #include <list>
@@ -43,18 +48,20 @@ vector< vector<wpair> > findPairs(vector<wormhole> wormholepos){
 		return wormholepermutes;
 	}else{
 		vector< vector<wpair> > allwpairs;
-		for(vector<wormhole>::iterator itr=wormholepos.begin();
-			itr!=wormholepos.end(); itr+=2){
+		wormhole first=wormholepos.front();
+		for(vector<wormhole>::iterator itr=wormholepos.begin()+1;
+			itr!=wormholepos.end(); itr++){
 			vector< vector<wpair> > alltemp;
 			wpair thing;
-			thing.a=*itr;
-			thing.b=*(itr+1);
+			thing.a=first;
+			thing.b=*itr;
 			vector<wormhole> wormholeposcopy;
 			for(vector<wormhole>::iterator it=wormholepos.begin();
 				it!=wormholepos.end(); it++){
-				if((*it).x != thing.a.x && (*it).y != thing.a.y && (*it).x != thing.b.x && (*it).y != thing.b.y){
-					wormholeposcopy.push_back(*it);
+				if(((*it).x == thing.a.x && (*it).y == thing.a.y) || ((*it).x == thing.b.x && (*it).y == thing.b.y)){
+					continue;
 				}
+				wormholeposcopy.push_back(*it);
 			}
 			alltemp=findPairs(wormholeposcopy);
 			for(vector< vector<wpair> >::iterator its=alltemp.begin();
@@ -71,21 +78,79 @@ vector< vector<wpair> > findPairs(vector<wormhole> wormholepos){
 		return allwpairs;
 	}
 }
+wormhole nextWormhole(vector<wpair> solutions, int x, int y){
+	for(vector<wpair>::iterator itr=solutions.begin(); itr!=solutions.end(); itr++){
+		if((*itr).a.x==x&&(*itr).a.y==y){
+			return (*itr).b;
+		}else if(((*itr).b.x==x&&(*itr).b.y==y)){
+			return (*itr).a;
+		}
+	}
+	wormhole temp;
+	temp.x=x;
+	temp.y=y;
+	return temp;
+}
+bool noWormhole(vector<wormhole> wormholepos, int x){
+	for(vector<wormhole>::iterator itr=wormholepos.begin(); itr!=wormholepos.end(); itr++){
+		if((*itr).x>=x){
+			return false;
+		}
+	}
+	return true;
+}
+bool hasLoop(vector<wormhole> wormholepos, vector<wpair> solutions, int a){
+	for(vector<wormhole>::iterator itr=wormholepos.begin(); itr!=wormholepos.end(); itr++){
+		int count=0;
+		int x=(*itr).x;
+		int y=(*itr).y;
+		bool nomorewormhole=false;
+		do{
+			wormhole temp=nextWormhole(solutions, x, y);
+			if(temp.x==x&&temp.y==y){
+				x++;
+			}else{
+				x=temp.x+1;
+				y=temp.y;
+				count++;
+			}
+			if(noWormhole(wormholepos, x)){
+				nomorewormhole=true;
+				break;
+			}
+		}while(count<a);
+		if(count==a){
+			return true;
+		}
+	}
+	return false;
+}
 int main() {
-	int a;
-	cin>>a;
+	ifstream fin;
+	ofstream fout;
+	fin.open("wormhole.in");
+	fout.open("wormhole.out");
+	int a, totalcount=0;
+	fin>>a;
 	vector<wormhole> wormholepos;
 	for(int i=0; i<a; i++){
 		wormhole temp;
-		cin>>temp.x>>temp.y;
+		fin>>temp.x>>temp.y;
 		wormholepos.push_back(temp);
 	}
 	vector< vector<wpair> > allpairs;
 	allpairs=findPairs(wormholepos);
-	for(vector< vector<wpair> >::iterator itr=allpairs.begin(); itr!=allpairs.end(); itr++){
+	/*for(vector< vector<wpair> >::iterator itr=allpairs.begin(); itr!=allpairs.end(); itr++){
 		for(vector<wpair>::iterator it=(*itr).begin(); it!=(*itr).end(); it++){
-			cout<<(*it).a.x<<" "<<(*it).a.y<<endl<<(*it).b.x<<" "<<(*it).b.y<<endl;
+			fout<<(*it).a.x<<" "<<(*it).a.y<<"=>"<<(*it).b.x<<" "<<(*it).b.y<<endl;
 		}
-		cout<<endl;
+	}*/
+	for(vector< vector<wpair> >::iterator itr=allpairs.begin(); itr!=allpairs.end(); itr++){
+		if(hasLoop(wormholepos, *itr, a)){
+			totalcount++;
+		}
 	}
+	fout<<totalcount<<endl;
+	fin.close();
+	fout.close();
 }
