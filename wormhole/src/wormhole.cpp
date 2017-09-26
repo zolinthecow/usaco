@@ -36,7 +36,7 @@ struct wpair{
 	wormhole a;
 	wormhole b;
 };
-vector< vector<wpair> > cindPairs(vector<wormhole> wormholepos){
+vector< vector<wpair> > findPairs(vector<wormhole> wormholepos){
 	vector< vector<wpair> > wormholepermutes;
 	if(wormholepos.size()==2){
 		vector<wpair> temp;
@@ -63,7 +63,7 @@ vector< vector<wpair> > cindPairs(vector<wormhole> wormholepos){
 				}
 				wormholeposcopy.push_back(*it);
 			}
-			alltemp=cindPairs(wormholeposcopy);
+			alltemp=findPairs(wormholeposcopy);
 			for(vector< vector<wpair> >::iterator its=alltemp.begin();
 					its!=alltemp.end(); its++){
 
@@ -131,7 +131,7 @@ wormhole nextRightWormhole(vector<wormhole> wormholepos, int x, int y){
 }
 bool hasLoop(vector<wormhole> wormholepos, vector<wpair> solutions, int a){
 	for(vector<wormhole>::iterator itr=wormholepos.begin(); itr!=wormholepos.end(); itr++){
-		int count=0;
+		int foutnt=0;
 		int x=(*itr).x;
 		int y=(*itr).y;
 		bool nomorewormhole=false;
@@ -142,7 +142,7 @@ bool hasLoop(vector<wormhole> wormholepos, vector<wpair> solutions, int a){
 			}else{
 				x=temp.x+1;
 				y=temp.y;
-				count++;
+				foutnt++;
 			}
 			wormhole right=nextRightWormhole(wormholepos, x, y);
 			if(right.x==-1){
@@ -157,31 +157,31 @@ bool hasLoop(vector<wormhole> wormholepos, vector<wpair> solutions, int a){
 				break;
 			}
 			*/
-		}while(count<a);
-		if(count==a){
+		}while(foutnt<a);
+		if(foutnt==a){
 			return true;
 		}
 	}
 	return false;
 }
 int main() {
-	//ifstream cin;
-	//ofstream cout;
-	//cin.open("wormhole.in");
-	//cout.open("wormhole.out");
+	ifstream fin;
+	ofstream fout;
+	fin.open("wormhole.in");
+	fout.open("wormhole.out");
 	int a, totalcount=0;
-	cin>>a;
+	fin>>a;
 	vector<wormhole> wormholepos;
 	for(int i=0; i<a; i++){
 		wormhole temp;
-		cin>>temp.x>>temp.y;
+		fin>>temp.x>>temp.y;
 		wormholepos.push_back(temp);
 	}
 	vector< vector<wpair> > allpairs;
-	allpairs=cindPairs(wormholepos);
+	allpairs=findPairs(wormholepos);
 	/*for(vector< vector<wpair> >::iterator itr=allpairs.begin(); itr!=allpairs.end(); itr++){
 		for(vector<wpair>::iterator it=(*itr).begin(); it!=(*itr).end(); it++){
-			cout<<(*it).a.x<<" "<<(*it).a.y<<"=>"<<(*it).b.x<<" "<<(*it).b.y<<endl;
+			foutt<<(*it).a.x<<" "<<(*it).a.y<<"=>"<<(*it).b.x<<" "<<(*it).b.y<<endl;
 		}
 	}*/
 	for(vector< vector<wpair> >::iterator itr=allpairs.begin(); itr!=allpairs.end(); itr++){
@@ -189,7 +189,7 @@ int main() {
 			totalcount++;
 		}
 	}
-	cout<<totalcount<<endl;
-	//cin.close();
-	//cout.close();
+	fout<<totalcount<<endl;
+	fin.close();
+	fout.close();
 }
