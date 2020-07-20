@@ -28,67 +28,37 @@ typedef vector<ii> vii;
 typedef vector<int> vi;
 typedef vector<string> vs;
 
-bool cannotStepFurther(int bootDepth, int stepLength, int tileOn, vi tiles){
-	unsigned int temp=tileOn;
-	if(temp==tiles.size()-1){
-		return true;
+int length, boots, tiles[250], stepSize[250], stepDepth[250], smallest=250;
+bool beenthere[250][250];
+void search(int tile, int boot){
+	if(beenthere[tile][boot]){
+		return;
 	}
-	for(int i=1; i<=stepLength; i++){
-		if(tiles[tileOn+i]<=bootDepth){
-			return false;
-		}
-	}
-	return true;
-}
-int minimumDiscarded(int tiles, int boots, vii backpack, vi allTiles){
-	int discarded=0, tileOn=0;
-	for(unsigned int i=0; i<backpack.size(); i++){
-		if(tileOn>=tiles-1){
-			break;
-		}
-		while(!cannotStepFurther((backpack[i]).first, (backpack[i]).second, tileOn, allTiles)){
-			int maximumToStep=0, tileToStepOn=0;
-			for(int j=tileOn+1; j<tileOn+backpack[i].second+1; j++){
-				unsigned int temp=j;
-				if(temp>allTiles.size()-1){
-					break;
-				}
-				if(allTiles[j]>=maximumToStep && allTiles[j]<=backpack[i].first){
-					maximumToStep=allTiles[j];
-					tileToStepOn=j;
-				}
+	beenthere[tile][boot]=true;
+	if(tile==length-1){
+		smallest=min(smallest, boot);
+	}else{
+		for(int i=tile+1; i<tile+1+stepSize[boot]; i++){
+			if(i>=length){
+				continue;
 			}
-			tileOn=tileToStepOn;
+			if(tiles[i]<=stepDepth[boot]){
+				search(i, boot);
+			}
 		}
-		if(tileOn>=tiles-1){
-			break;
+		for(int j=boot+1; j<boots; j++){
+			search(tile, j);
 		}
-		discarded++;
 	}
-	return discarded;
 }
 int main() {
-	ifstream fin;
-	ofstream fout;
-	fin.open("snowboots.in");
-	fout.open("snowboots.out");
-	int tile, boots;
-	fin>>tile>>boots;
-	vi tiles;
-	for(int j=0; j<tile; j++){
-		int thing;
-		fin>>thing;
-		tiles.push_back(thing);
+	cin>>length>>boots;
+	for(int i=0; i<length; i++){
+		cin>>tiles[i];
 	}
-	vii backpack;
 	for(int i=0; i<boots; i++){
-		int bootDepth, stepLength;
-		fin>>bootDepth>>stepLength;
-		ii temp;
-		temp.first=bootDepth, temp.second=stepLength;
-		backpack.push_back(temp);
+		cin>>stepDepth[i]>>stepSize[i];
 	}
-	fout<<minimumDiscarded(tile, boots, backpack, tiles)<<endl;
-	fin.close();
-	fout.close();
+	search(0, 0);
+	cout<<smallest;
 }

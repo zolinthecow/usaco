@@ -1,8 +1,3 @@
-/*
-ID: colinzh3
-PROG: castle
-LANG: C++
- */
 #include <map>
 #include <set>
 #include <list>
@@ -27,40 +22,44 @@ LANG: C++
 #include <stdlib.h>
 #include <map>
 using namespace std;
+#define pb push_back
+#define ii pair<int, int>
+#define vi vector<int>
+#define vii vector<ii>
+#define vs vector<string>
+#define ll long long
 
 int main() {
 	ifstream fin;
 	ofstream fout;
 	fin.open("shuffle.in");
 	fout.open("shuffle.out");
-	int a;
-	fin>>a;
-	int *positions;
-	positions=new int[a];
-	int *cows;
-	cows=new int[a];
-	for(int i=0; i<a; i++){
-		int z;
-		fin>>z;
-		z-=1;
-		positions[i]=z;
+	int cowCount;
+	fin>>cowCount;
+	int *move = new int[cowCount];
+	int *to = new int[cowCount];
+	for(int i = 0; i < cowCount; i++){
+		fin>>to[i];
+		to[i] -= 1;
+		move[ to[i] ]++;
 	}
-	for(int j=0; j<a; j++){
-		fin>>cows[j];
-	}
-	for(int k=0; k<3; k++){
-		int *cowcopy;
-		cowcopy=new int[a];
-		for(int l=0; l<a; l++){
-			cowcopy[l]=cows[ positions[l] ];
-		}
-		for(int m=0; m<a; m++){
-			cows[m]=cowcopy[m];
+	queue<int> noParent;
+	int neverEmpty = cowCount;
+	for(int i = 0; i < cowCount; i++){
+		if( move[i] == 0 ){
+			noParent.push(i);
+			neverEmpty--;
 		}
 	}
-	for(int n=0; n<a; n++){
-		fout<<cows[n]<<endl;
+	while( !noParent.empty() ){
+		int on = noParent.front();
+		noParent.pop();
+		if( --move[ to[on] ]==0 ){
+			noParent.push( to[on] );
+			neverEmpty--;
+		}
 	}
+	fout<<neverEmpty<<endl;
 	fin.close();
 	fout.close();
 }

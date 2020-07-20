@@ -29,12 +29,16 @@ typedef vector<int> vi;
 typedef vector<string> vs;
 
 int main() {
+	ifstream fin;
+	ofstream fout;
+	fin.open("pairup.in");
+	fout.open("pairup.out");
 	int a;
-	cin>>a;
+	fin>>a;
 	vii cows;
 	for(int i=0; i<a; i++){
 		int b, c;
-		cin>>b>>c;
+		fin>>b>>c;
 		ii temp;
 		temp.first=c, temp.second=b;
 		cows.push_back(temp);
@@ -58,5 +62,7 @@ int main() {
 			back--;
 		}
 	}
-	cout<<max;
+	fout<<max;
+	fin.close();
+	fout.close();
 }

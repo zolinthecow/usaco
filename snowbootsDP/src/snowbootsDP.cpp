@@ -20,50 +20,69 @@
 #include <iostream>
 #include <algorithm>
 #include <stdlib.h>
-#include <unordered_map>
+#include <map>
 using namespace std;
-typedef long long ll;
-typedef pair<int, int> ii;
-typedef vector<ii> vii;
-typedef vector<int> vi;
-typedef vector<string> vs;
-#define INF 1000000000
+#define pb push_back
+#define ii pair<int, int>
+#define vi vector<int>
+#define vii vector<ii>
+#define vs vector<string>
+#define ll long long
 
-int N, B, F[250], S[250], D[250], best = 9999;
-bool beenthere[250][250];
+int **memo;
 
-int solve() {
-	for (int b = 0; b < B; b++)
-		for (int i = 0; i < N; i++) {
+vi tiles;
+vii boots;
 
-			if (F[i] > S[b]) {
-				beenthere[i][b] = false;
-				continue;
+int calculate(int tileOn, int bootOn)
+{
+	int result = boots.size();
+	if (memo[tileOn][bootOn] != -1) {
+		return memo[tileOn][bootOn];
+	}
+	if (tileOn == (int)tiles.size()-1) {
+		memo[tileOn][bootOn] = bootOn;
+		result = bootOn;
+	} else {
+		for (int i = bootOn; i < (int)boots.size(); i++) {
+			for (int k = 1; k <= boots[i].second; k++) {
+				if (k + tileOn < (int)tiles.size()) {
+					if (boots[i].first >= tiles[tileOn + k]) {
+						memo[tileOn + k][i] = calculate(tileOn + k,i);
+						result = min(result,memo[tileOn + k][i]);
+					}
+				}
 			}
-
-			if (i == 0 && b == 0)
-				beenthere[i][b] = true;
-
-			for (int i2 = 0; i2 < i; i2++)
-				if (beenthere[i2][b] && i2 + D[b] >= i)
-					beenthere[i][b] = true;
-
-			for (int b2 = 0; b2 < b; b2++)
-				if (beenthere[i][b2])
-					beenthere[i][b] = true;
-
-			if (i == N - 1 && beenthere[i][b])
-				return b;
 		}
+	}
+	return result;
 }
-
-int main(void) {
-	cin >> N >> B;
-	for (int i = 0; i < N; i++)
-		cin >> F[i];
-	for (int i = 0; i < B; i++)
-		cin >> S[i] >> D[i];
-
-	cout << solve() << "\n";
-	return 0;
+int main()
+{
+	ifstream fin;
+	ofstream fout;
+	fin.open("snowboots.in");
+	fout.open("snowboots.out");
+	int tileCount, bootCount;
+	fin>>tileCount>>bootCount;
+	memo = new int *[tileCount];
+	for (int i = 0; i < tileCount; i++) {
+		int temp;
+		fin >> temp;
+		tiles.pb(temp);
+		memo[i] = new int [bootCount];
+	}
+	for (int i = 0; i < bootCount; i++) {
+		ii temp;
+		fin >> temp.first >> temp.second;
+		boots.pb(temp);
+	}
+	for (int i = 0; i < tileCount; i++) {
+		for (int j = 0; j < bootCount; j++) {
+			memo[i][j] = -1;
+		}
+	}
+	fout << calculate(0,0) << endl;
+	fin.close();
+	fout.close();
 }

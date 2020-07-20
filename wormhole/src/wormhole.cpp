@@ -36,6 +36,7 @@ struct wpair{
 	wormhole a;
 	wormhole b;
 };
+
 vector< vector<wpair> > findPairs(vector<wormhole> wormholepos){
 	vector< vector<wpair> > wormholepermutes;
 	if(wormholepos.size()==2){

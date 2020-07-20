@@ -20,29 +20,35 @@
 #include <iostream>
 #include <algorithm>
 #include <stdlib.h>
-#include <unordered_map>
+#include <map>
+#include <functional>
 using namespace std;
-typedef long long ll;
-typedef pair<int, int> ii;
-typedef vector<ii> vii;
-typedef vector<int> vi;
-typedef vector<string> vs;
-#define INF 1000000000
+#define pb push_back
+#define ii pair<int, int>
+#define vi vector<int>
+#define vii vector<ii>
+#define vs vector<string>
+#define ll long long
 
 int main() {
+	ifstream fin;
+	ofstream fout;
+	fin.open("cowjog.in");
+	fout.open("cowjog.out");
 	int count, time;
-	cin>>count>>time;
-	vii cows;
+	fin>>count>>time;
+	vi cows;
 	for(int i=0; i<count; i++){
 		ii temp;
-		cin>>temp.first>>temp.second;
-		cows.push_back(temp);
+		fin>>temp.first>>temp.second;
+		cows.pb(time * temp.second + temp.first);
 	}
-	vii positions=cows;
-	for(int i=0; i<(int)positions.size(); i++){
-		int moved=positions[i].second *= time;
-		positions[i].second += moved+positions[i].first;
+	int ans = 1, slowest = cows.back();
+	for (int i = count - 2; i >= 0; i--) {
+		if (cows[i] < slowest) ans++;
+		slowest = min(slowest,cows[i]);
 	}
-	int answer=0;
-
+	fout << ans << endl;
+	fin.close();
+	fout.close();
 }

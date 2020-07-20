@@ -1,8 +1,3 @@
-/*
-ID: colinzh3
-PROG: castle
-LANG: C++
- */
 #include <map>
 #include <set>
 #include <list>
@@ -26,83 +21,55 @@ LANG: C++
 #include <algorithm>
 #include <stdlib.h>
 #include <map>
+#include <unordered_set>
+#include <functional>
 using namespace std;
+#define pb push_back
+#define ii pair<int, int>
+#define vi vector<int>
+#define vii vector<ii>
+#define vs vector<string>
+#define ll long long
+#define ms(a,b) memset(&a,b,sizeof a);
+#define mc(a,b) memcpy(&a,b,sizeof(a));
 
-bool sortAscending(pair<int, int> a, pair<int, int> b){
-	return a.first<b.first;
-}
-bool waytosort(int a, int b){
-	return a>b;
-}
-
-int fireOne(vector< pair<int, int> >allLifeguards){
-	/*vector<int> actualShifts;
-	unsigned int counta=1;
-	for(vector<pair<int, int> >::iterator itr=allLifeguards.begin(); itr!=allLifeguards.end(); itr++){
-		if(counta==allLifeguards.size()){
-			actualShifts.push_back(itr->second - itr->first);
-			break;
-		}
-		int shiftOverlap=itr->second - (itr+1)->first;
-		if(shiftOverlap<0){
-			actualShifts.push_back(itr->second - itr->first);
-			break;
-		}
-		actualShifts.push_back((itr->second-shiftOverlap) - itr->first);
-		counta++;
-	}
-	sort(actualShifts.begin(), actualShifts.end(), waytosort);
-	int total=0;
-	for(vector< pair<int, int> >::iterator it=allLifeguards.begin(); it!=allLifeguards.end(); it++){
-		total+=it->second
-	}
-	return total;*/
-	int count=0;
-	vector<int> removedOne;
-	for(vector< pair<int, int> >::iterator itr=allLifeguards.begin(); itr!=allLifeguards.end(); itr++){
-		pair<int, int> temp;
-		temp.first=itr->first;
-		temp.second=itr->second;
-		allLifeguards.erase(allLifeguards.begin()+count);
-		unsigned int counta=1;
-		int total=0;
-		for(vector<pair<int, int> >::iterator it=allLifeguards.begin(); it!=allLifeguards.end(); it++){
-			if(counta==allLifeguards.size()){
-				total+=it->second - it->first;
-				break;
-			}
-			int shiftOverlap=it->second - (it+1)->first;
-			if(shiftOverlap<0){
-				total+=it->second - it->first;
-				counta++;
-				continue;
-			}
-			total+=(it->second-shiftOverlap) - it->first;
-			counta++;
-		}
-		removedOne.push_back(total);
-		count++;
-		allLifeguards.push_back(temp);
-		sort(allLifeguards.begin(), allLifeguards.end(), sortAscending);
-	}
-	sort(removedOne.begin(), removedOne.end(), waytosort);
-	return removedOne.front();
-}
 int main() {
 	ifstream fin;
 	ofstream fout;
 	fin.open("lifeguards.in");
 	fout.open("lifeguards.out");
-	int amount;
-	vector< pair<int, int> >allLifeguards;
-	fin>>amount;
-	for(int i=0; i<amount; i++){
-		pair<int, int> lifeguard;
-		fin>>lifeguard.first>>lifeguard.second;
-		allLifeguards.push_back(lifeguard);
+	int guardsAmount;
+	fin >> guardsAmount;
+	vii lifeguards;
+	for (int i = 0; i < guardsAmount; i++) {
+		int startTime, endTime;
+		fin >> startTime >> endTime;
+		ii temp(startTime,i), temp1(endTime,i);
+		lifeguards.pb(temp); lifeguards.pb(temp1);
 	}
-	sort(allLifeguards.begin(), allLifeguards.end(), sortAscending);
-	fout<<fireOne(allLifeguards)<<endl;
+	sort(lifeguards.begin(),lifeguards.end());
+	unordered_set<int> working;
+	vi individualWorking(guardsAmount,0);
+	int totalWorking = 0;
+	for (int i = 0; i < (int)lifeguards.size(); i++) {
+		if(working.find(lifeguards[i].second) == working.end()) {
+			working.insert(lifeguards[i].second);
+		} else {
+			working.erase(lifeguards[i].second);
+		}
+		if (working.size() == 1) {
+			auto it = working.begin();
+			individualWorking[*it] += lifeguards[i + 1].first - lifeguards[i].first;
+		}
+		if (working.size() != 0) {
+			totalWorking += lifeguards[i + 1].first - lifeguards[i].first;
+		}
+	}
+	int ans = 0;
+	for (int i = 0; i < guardsAmount; i++) {
+		ans = max(ans, totalWorking - individualWorking[i]);
+	}
+	fout << ans << endl;
 	fin.close();
 	fout.close();
 }
