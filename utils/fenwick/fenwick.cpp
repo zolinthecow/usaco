@@ -9,11 +9,11 @@ const int mxN = 1e5 + 5;
 
 int bit[mxN];
 
-void update(int pos, int val) { for (; pos <= 2 * N; pos += (pos & (-pos))) bit[pos] ^= val; }
+void update(int pos, int val) { for (; pos <= N; pos += (pos & (-pos))) bit[pos] += val; }
 
 int query(int pos) {
     int ans = 0;
-    for (; pos; pos -= (pos & (-pos))) ans ^= bit[pos];
+    for (; pos; pos -= (pos & (-pos))) ans += bit[pos];
     return ans;
 }
 int query(int a, int b) {

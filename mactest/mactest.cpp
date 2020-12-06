@@ -15,10 +15,15 @@ using vii = vector<ii>;
 
 #define LSOne(S) (S & (-S))
 
-const int INF = 1061109567
+const int INF = 1061109567;
 
-void setIO(string name ) {
+void setIO(string name) {
     ios_base::sync_with_stdio(0); cin.tie(0);
     freopen((name+".in").c_str(), "r", stdin); 
-    freopen((name+".out").c_str(), "w", stdout);
+    //freopen((name+".out").c_str(), "w", stdout);
+}
+
+int main () {
+    setIO("mactest");	
+
 }

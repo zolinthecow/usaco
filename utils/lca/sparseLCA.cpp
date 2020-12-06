@@ -1,7 +1,18 @@
-#include <cstdio>
-#include <vector>
 #include <bits/stdc++.h>
 using namespace std;
+#define ll long long
+#define vi vector<ll>
+#define ii pair<ll, ll>
+#define vii vector<ii>
+#define pb push_back
+#define INF 2000000000
+#define LSOne(S) (S & (-S))
+
+void setIO(string s) {
+	ios_base::sync_with_stdio(0); cin.tie(0);
+	freopen((s + ".in").c_str(), "r", stdin);
+	//freopen((s + ".out").c_str(), "w", stdout);
+}
 
 const int mxN = 1e5 + 5;
 const int logN = 14;
@@ -36,17 +47,53 @@ public:
   }
 };
 
-vector< vector<int> > adjList;
+int N;
+vector<int> adjList[mxN]; //children
 
-void dfs(int cur, int depth) {
+//void dfs1() {
+    //stack<ii> st; st.push(ii(1, 1));
+    //visited[1] = true;
+    //int cont = false;
+    //while (!st.empty()) {
+		//ii top = st.top();
+		//int u = top.first, p = top.second;
+		//visited[u] = true;
+		//cont = false;
+		//if (!tin[u]) {
+			//tin[u] = ++timer;
+			//anc[u][0] = p;
+			//for (int i = 1; i < 18; i++)
+				//anc[u][i] = anc[anc[u][i - 1]][i - 1];
+		//}
+		//for (auto v : adjList[u]) {
+			//if (!visited[v]) {
+				//st.push(ii(v, u));
+				//cont = true;
+				//break;
+			//}
+		//}
+		//if (!cont) {
+			//tout[u] = ++timer;
+			//st.pop();
+		//}
+	//}
+//}
+
+void dfs(int cur, int depth, int p = -1) {
   H[cur] = idx;
   E[idx] = cur;
   L[idx++] = depth;
   for (int i = 0; i < (int) adjList[cur].size(); i++) {
-    dfs(adjList[cur][i], depth+1);
+	  if (adjList[cur][i] == p) continue;
+    dfs(adjList[cur][i], depth+1, cur);
     E[idx] = cur;                              // backtrack to current node
     L[idx++] = depth;
   }
+}
+
+void dfs2() {
+	stack<ii> st; st.push(ii(0, 0));
+	
 }
 
 void buildRMQ() {
@@ -56,9 +103,17 @@ void buildRMQ() {
 }
 
 int main() {
-
-  buildRMQ();
-  RMQ rmq(20, L);
-  cout << rmq.lca(4, 6) << endl;
-  return 0;
+	setIO("test.in")
+	cin >> N;
+	int a, b;
+	for (int i = 0; i < N - 1; i++) {
+		cin >> a >> b;
+		a--, b--;
+		adjList[a].push_back(b);
+		adjList[b].push_back(a);
+	}
+	buildRMQ();
+	RMQ rmq(20, L);
+	cout << rmq.lca(2, 3) << endl;
+	return 0;
 }

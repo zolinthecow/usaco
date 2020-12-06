@@ -17,8 +17,11 @@ using vii = vector<ii>;
 
 const int INF = 1061109567
 
-void setIO(string name ) {
-    ios_base::sync_with_stdio(0); cin.tie(0);
-    freopen((name+".in").c_str(), "r", stdin); 
-    freopen((name+".out").c_str(), "w", stdout);
+int rand(int a, int b) {
+	return a + rand() % (b - a + 1);
+}
+
+int main(int argc, char* argv[]) {
+	srand(atoi(argv[1]));
+	
 }
